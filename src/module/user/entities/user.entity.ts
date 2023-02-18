@@ -5,7 +5,7 @@ import { PrimaryGeneratedColumn } from "typeorm/decorator/columns/PrimaryGenerat
 @Entity('user')
 export class UserEntity {
     @PrimaryGeneratedColumn()
-    id: string;
+    id: number;
 
     @Column()
     username: string;

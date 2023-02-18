@@ -4,7 +4,7 @@ import { catchError, lastValueFrom, map, Observable, of } from 'rxjs';
 import { AxiosResponse } from 'axios';
 import { ErrorHelper } from 'src/helpers/error.helper';
 import { CreateOrderDTO } from './dto/createOrder.dto';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, In, Repository } from 'typeorm';
 import { OrderEntity } from './entities/order.entity';
 import { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET, PAYPAL_URL } from 'src/environments';
 import { UserEntity } from '../user/entities/user.entity';
@@ -22,6 +22,9 @@ export default class OrderService {
 
         @InjectRepository(OrderEntity)
         private orderRepo: Repository<OrderEntity>,
+        @InjectRepository(ItemEntity)
+        private itemRepo: Repository<ItemEntity>,
+
 
     ) { }
 
@@ -79,13 +82,12 @@ export default class OrderService {
             orderItem.itemId = itemId;
             return orderItem;
         });
-        const itemList = dto.itemId.map(async (itemId) => {
-            const item = await this.entityManage.findOne(ItemEntity, {
-                where: { id: itemId }
-            })
-            if (!item) {
-                ErrorHelper.NotFoundException(ERROR_MESSAGE.ITEM.NOT_FOUND);
-            }
+        const items = await this.itemRepo.find({
+            where: {
+                id: In(dto.itemId),
+            },
+        });
+        const itemList = items.map((item) => {
             return {
                 name: item.name,
                 description: item.desc,
@@ -96,21 +98,20 @@ export default class OrderService {
                 }
             }
         });
-
+        console.log(itemList, "ser")
         const orderPaypal = await lastValueFrom(
             this.httpService.post(
-                `https://api-m.sandbox.paypal.com/v2/checkout/ỏ`,
+                `https://api-m.sandbox.paypal.com/v2/checkout/orders`,
                 {
                     intent: "CAPTURE",
                     purchase_units: [
                         {
-                            custom_id: dto.userId,
                             items: itemList,
                             amount: {
-                                "currency_code": "USD",
+                                currency_code: "USD",
                                 value: dto.totalCost,
                                 breakdown: {
-                                    "item_total": {
+                                    item_total: {
                                         currency_code: "USD",
                                         value: dto.totalCost
                                     }
