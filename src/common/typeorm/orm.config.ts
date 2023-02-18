@@ -5,13 +5,15 @@ import { UserEntity } from "src/module/user/entities/user.entity";
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
 import { DB_DATABASE, DB_HOST, DB_PASSWORD, DB_PORT, DB_USERNAME } from "src/environments";
 import { ItemEntity } from "src/module/item/entities/item.entity";
+import { DatasetEntity } from "src/module/dataset/entities/dataset.entity";
 
 
 const entities = [
   OrderEntity,
   OrderItemEntity,
   ItemEntity,
-  UserEntity
+  UserEntity,
+  DatasetEntity
 ];
 @Injectable()
 export class OrmConfig implements TypeOrmOptionsFactory {

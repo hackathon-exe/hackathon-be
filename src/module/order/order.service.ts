@@ -12,6 +12,7 @@ import { ItemEntity } from '../item/entities/item.entity';
 import { ERROR_MESSAGE } from 'src/common/constant/messages.constant';
 import { OrderItemEntity } from '../orderItem/entities/orderItem.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { OrderStatus } from 'src/common/enum/orderStatus.enum';
 
 
 @Injectable()
@@ -98,7 +99,6 @@ export default class OrderService {
                 }
             }
         });
-        console.log(itemList, "ser")
         const orderPaypal = await lastValueFrom(
             this.httpService.post(
                 `https://api-m.sandbox.paypal.com/v2/checkout/orders`,
@@ -138,6 +138,7 @@ export default class OrderService {
         });
         const order = await this.orderRepo.save({
             id: orderPaypal.id,
+            status: orderPaypal.status,
             orderItem: orderItems,
             userId: user
 
@@ -151,7 +152,7 @@ export default class OrderService {
             this.getPayPalAccessToken(),
         );
         let token = `Bearer ${response['access_token']}`;
-        return this.httpService.post(
+        const capturePayment = this.httpService.post(
             `api-m.sandbox.paypal.com/v2/checkout/orders/${orderId}/capture`,
             {},
             {
@@ -161,7 +162,12 @@ export default class OrderService {
                 }
             }
         )
+        await this.orderRepo.save({
+            id: orderId,
+            status: OrderStatus.COMPLETED,
 
+        });
+        return capturePayment
     }
     async confirmPayment(orderId: string): Promise<Observable<AxiosResponse<[]>>> {
         const response = await lastValueFrom(

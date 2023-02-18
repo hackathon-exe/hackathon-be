@@ -1,3 +1,4 @@
+import { OrderStatus } from 'src/common/enum/orderStatus.enum';
 import { OrderItemEntity } from 'src/module/orderItem/entities/orderItem.entity';
 import { UserEntity } from 'src/module/user/entities/user.entity';
 import {
@@ -17,8 +18,11 @@ export class OrderEntity {
     @PrimaryColumn()
     id: string;
 
-    @Column()
-    status: string
+    @Column({
+        type: 'enum',
+        enum: OrderStatus
+    })
+    status: OrderStatus
 
     @OneToMany(() => OrderItemEntity, (itemOrder) => itemOrder.order, { cascade: true })
     public orderItem: OrderItemEntity[];
