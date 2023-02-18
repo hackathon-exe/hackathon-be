@@ -18,6 +18,7 @@ export class HttpExceptionFilter extends BaseExceptionFilter {
     };
     new Logger('HttpExceptionFilter').error({ message, stack });
     new Logger('Raw-Exception').error(exception)
+    new Logger('Raw-Exception').error(response)
     if (exception instanceof HttpException) {
       const status =
         exception instanceof HttpException
