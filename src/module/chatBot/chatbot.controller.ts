@@ -1,11 +1,9 @@
 import { Controller, Get } from "@nestjs/common";
 import { Body, Param, Post } from "@nestjs/common/decorators";
-const csvParser = require('csv-parser');
-import * as fs from 'fs';
-import * as path from 'path';
+import { ApiTags } from "@nestjs/swagger";
 import ChatBoxService from "./chatBot.service";
 import generateTextDTO from "./dto/createText.dto";
-
+@ApiTags('Chatbox')
 @Controller('chatbox')
 export class ChatBotController {
     constructor(private chatBoxService: ChatBoxService) { }
