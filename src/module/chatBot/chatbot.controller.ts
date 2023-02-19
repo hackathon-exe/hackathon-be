@@ -11,8 +11,7 @@ export class ChatBotController {
     constructor(private chatBoxService: ChatBoxService) { }
     @Post('chatbot')
     async generateTest(@Body() dto: generateTextDTO): Promise<any> {
-        console.log(dto.prompt)
-        return this.chatBoxService.generateText(dto.prompt);
+        return this.chatBoxService.generateText(dto.input);
 
     }
 }

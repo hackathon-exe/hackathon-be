@@ -6,6 +6,6 @@ export class generateTextDTO {
     @ApiProperty()
     @IsNotEmpty()
     @IsString()
-    prompt: string;
+    input: string;
 }
 export default generateTextDTO;
