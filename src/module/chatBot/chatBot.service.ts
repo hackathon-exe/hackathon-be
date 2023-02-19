@@ -1,7 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Inject, Injectable } from '@nestjs/common';
 import { AxiosResponse } from 'axios';
-import { Configuration, OpenAIApi, CreateCompletionResponse } from 'openai';
+import { Configuration, OpenAIApi } from 'openai';
 import { lastValueFrom, Observable } from 'rxjs';
 import { OPENAI_API_KEY } from 'src/environments';
 import generateTextDTO from './dto/createText.dto';
